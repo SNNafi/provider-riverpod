@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider_vs_riverpods/provider/count_provider.dart';
 import 'package:provider_vs_riverpods/provider/xyz_business_provider.dart';
 
@@ -19,31 +19,25 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => CountProvider()),
-          ChangeNotifierProvider(create: (_) => XYZBusinessProvider()),
-        ],
-        child: const MyHomePage(title: 'Provider Demo Home Page'),
+      home: const ProviderScope(
+        child: MyHomePage(title: 'Provider Demo Home Page'),
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   void _incrementCounter() {
-    // both are same
-    CountProvider.of(context).updateCount(by: 1);
-    // context.read<CountProvider>().updateCount(by: 1);
+    ref.read(countProvider).updateCount(by: 1);
   }
 
   @override
@@ -61,8 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              context.watch<CountProvider>().count.toString(),
-              // CountProvider.of(context, listen: true).count.toString()
+              ref.watch(countProvider).count.toString(),
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(
@@ -72,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'Generated Business Logic',
             ),
             Text(
-              context
-                  .read<XYZBusinessProvider>()
-                  .businessLogic(context.watch<CountProvider>()),
+              ref.read(xyzBusinessLogicProvider).businessLogic(),
             ),
           ],
         ),

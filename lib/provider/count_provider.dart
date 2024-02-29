@@ -1,15 +1,4 @@
-import 'package:flutter/material.dart' show ChangeNotifier, BuildContext;
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider_vs_riverpods/notifier/count_change_notifier.dart';
 
-class CountProvider extends ChangeNotifier {
-  int count = 0;
-
-  void updateCount({required int by}) {
-    count += by;
-    notifyListeners();
-  }
-
-  static CountProvider of(BuildContext context, {bool listen = false}) {
-    return Provider.of<CountProvider>(context, listen: listen);
-  }
-}
+final countProvider = ChangeNotifierProvider((_) => CountChangeNotifier());
